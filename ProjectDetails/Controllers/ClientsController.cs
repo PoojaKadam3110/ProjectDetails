@@ -17,7 +17,7 @@ namespace ProjectDetailsAPI.Controllers
         [HttpGet("/api/Clients/List")]
         public ActionResult Get()
         {
-            var clientsFromRepo = _unitOfWork.Clients.GetAll();
+            var clientsFromRepo = _unitOfWork.Clients.GetAll().Where(x => x.isDeleted == false);
 
             return Ok(clientsFromRepo);
         }
@@ -25,6 +25,10 @@ namespace ProjectDetailsAPI.Controllers
         public ActionResult GetById(int id)
         {
             var clientsFromRepo = _unitOfWork.Clients.GetById(id);
+            if(clientsFromRepo == null || clientsFromRepo.isDeleted == true)
+            {
+                return NotFound("data may be deleted,please try with another id");
+            }
 
             return Ok(clientsFromRepo);
         }
