@@ -10,5 +10,6 @@ namespace ProjectDetailsAPI.Data
             
         }
         public DbSet<Clients> Clients { get; set; }
+        public DbSet<Role> Roles { get; set; }
     }
 }

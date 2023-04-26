@@ -6,6 +6,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using ProjectDetailsAPI.Data;
 using ProjectDetailsAPI.GenericRepo;
+using ProjectDetailsAPI.Implementation;
 using ProjectDetailsAPI.Mappings;
 using ProjectDetailsAPI.Repositories;
 using ProjectDetailsAPI.Services;
@@ -68,7 +69,13 @@ options.UseSqlServer(builder.Configuration.GetConnectionString("ProjectsAuthConn
 //builder.Services.AddScoped<IUsersRepository, UsersRepository>(); //also write 2nd para is InMemoryRegionRepository to show data insite that class
 builder.Services.AddScoped<ITokenRepository, TokenRepository>(); //for token creation
 //builder.Services.AddScoped<IProjectRepository, ProjectsRepository>(); //for token Project repository
-builder.Services.AddScoped<IClientRepository, ClientRepository>(); //for Client Project repository
+//builder.Services.AddTransient<IClientRepository, ClientRepository>(); //for Client Project repository
+
+//For Generic Repo Unit DI
+builder.Services.AddTransient<IUnitOfWork, UnitOfWork>();
+
+builder.Services.AddTransient<IClientRepository,ClientRepository>(); //becoz i have added this before thats why this line needed
+
 
 //For Generic Repository
 builder.Services.AddTransient(typeof(IRepo<>),typeof(Repository<>));

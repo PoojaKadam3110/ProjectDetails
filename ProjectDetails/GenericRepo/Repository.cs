@@ -34,7 +34,7 @@ namespace ProjectDetailsAPI.GenericRepo
 
         List<T> IRepo<T>.GetAll()
         {
-            throw new NotImplementedException();
+            return _dbcontext.Set<T>().ToList();
         }
     }
 }

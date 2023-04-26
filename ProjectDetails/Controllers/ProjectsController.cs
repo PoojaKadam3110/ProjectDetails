@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ProjectDetailsAPI.CustomeActionFilters;
 using ProjectDetailsAPI.Data;
+using ProjectDetailsAPI.Data.Command;
 using ProjectDetailsAPI.Data.Query;
 using ProjectDetailsAPI.GenericRepo;
 using ProjectDetailsAPI.Models.Domain;
@@ -36,7 +37,7 @@ namespace ProjectDetailsAPI.Controllers
         //public async Task<IEnumerable<Clients>> GetClients() => await _mediator.Send(new GetClients.Query());
  
 
-        [HttpGet]
+        [HttpGet("/api/Projects/Clients/List")]
         //public async Task<ActionResult<List<Clients>>> GetClientsDetails()
         public async Task<ActionResult<List<Clients>>> GetAll()
         {            
@@ -44,24 +45,14 @@ namespace ProjectDetailsAPI.Controllers
             // return await _dbcontext.Clients.Where(x => x.isDeleted == false).ToListAsync();
             return Ok(clientsDetails);
         }
-            //public List<T> GetAll()
-            //{
-            //    //return await _dbcontext.Clients.Where(x => x.isDeleted == false).ToListAsync();
-            //    return _repo.GetAll();
-            //}
+        //public List<T> GetAll()
+        //{
+        //    //return await _dbcontext.Clients.Where(x => x.isDeleted == false).ToListAsync();
+        //    return _repo.GetAll();
+        //}
 
-
-        [HttpGet]
-        [Route("{id:int}")]
-        public async Task<Clients> GetClientsDetailsById(int id)
-        {
-            return await _dbcontext.Clients.Where(x => x.isDeleted == false).FirstOrDefaultAsync(x => x.Id == id);
-            //var clientsDetailsforId = await _mediator.(new GetClientsQuery());
-            //return Ok(clientsDetailsforId);
-        }
-        [HttpPost]
+        [HttpPost("/api/Projects/Client/Create")]
         [ValidateModule]
-        //[Route("{id:int}")]
 
         public async Task<Clients> AddClients(Clients clients)
         {
@@ -70,11 +61,55 @@ namespace ProjectDetailsAPI.Controllers
 
             return clients;
         }
-        [HttpPut]
-        [ValidateModule]
-        [Route("{id:int}")]
 
-        public async Task<Clients?> UpdateClients(int id,Clients clients)
+        [HttpGet("/api/Projects/Client/ById")]   //("/api/Projects/Client/ById")
+        [ValidateModule]
+        //[Route("{id:int}")]
+        public async Task<IActionResult> GetClientsDetailsById(int id)
+        {
+            var response = await _mediator.Send(new GetClientByIdQuery
+            {
+                id = id
+            });
+            return Ok(response);
+        }
+        //}
+        //[ValidateModule]
+        //[Route("{id:int}")]
+
+        //public async Task<Clients> AddClients(Clients clients)
+        //{
+        //    var addClient = await _mediator.Send(new AddClientCommand
+        //    {
+        //        _dbcontext.Clients = clients
+        //    });
+        //    //await _dbcontext.Clients.AddAsync(clients);
+        //    //await _dbcontext.SaveChangesAsync();
+
+        //    return addClient;
+        //}
+
+        //public async Task<Clients> GetClientsDetailsById(int id)
+        //{           
+        //    var clientsDetailsById = await _mediator.Send(new GetClientsQuery())
+        //    {
+        //        id = id;
+        //    };
+
+        //    return Ok(clientsDetailsById);
+
+        //    //return await _dbcontext.Clients.Where(x => x.isDeleted == false).FirstOrDefaultAsync(x => x.Id == id);
+        //    // return await _dbcontext.Clients.Where(x => x.isDeleted == false).ToListAsync();
+        //    //var clientsDetailsforId = await _mediator.(new GetClientsQuery());
+        //    //return Ok(clientsDetailsforId);
+        //}
+
+
+        [HttpPut("/api/Projects/Clients/By/Id")]
+        [ValidateModule]
+        //[HttpPut]
+        //[Route("{id:int}")]
+        public async Task<Clients> UpdateClients(int id,Clients clients)
         {
             var existingClient = await _dbcontext.Clients.FirstOrDefaultAsync(x => x.Id == id);
 
@@ -93,11 +128,12 @@ namespace ProjectDetailsAPI.Controllers
             return existingClient;
         }
 
-        [HttpDelete]
+        [HttpDelete("/api/Projects/Clients/Delete/By/Id")]
         [ValidateModule]
-        [Route("{id:int}")]
+        //[HttpDelete]        
+        //[Route("{id:int}")]
 
-        public async Task<Clients?> SoftDeleteClient(int id , Clients clients)
+        public async Task<Clients?> SoftDeleteClient(int id)
         {
             var existingClient = await _dbcontext.Clients.FirstOrDefaultAsync(x => x.Id == id);
 
@@ -110,7 +146,7 @@ namespace ProjectDetailsAPI.Controllers
 
             await _dbcontext.SaveChangesAsync();    
 
-            return clients;
+            return existingClient;
             //return response()->json("User deleted successfully!!!");
             //return Ok("User deleted successfully!!!");
         }
