@@ -5,7 +5,7 @@ namespace ProjectDetailsAPI.Services
     public interface IClientRepository
     {
         Task<List<ClientResponse>> GetUsers();
-        //Task<List<ClientResponse>> GetUsersById(int id);
+        Task<Clients> GetUsersById(int id);
         Task<Clients> DeleteClientById(int id);
         Task<Clients> AddClients(Clients clients);
         Task<Clients> UpdateClients(int id,Clients clients);

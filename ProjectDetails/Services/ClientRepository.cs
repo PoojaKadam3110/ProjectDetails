@@ -68,6 +68,11 @@ namespace ProjectDetailsAPI.Services
             }
         }
 
+        public async Task<Clients> GetUsersById(int id)
+        {
+            return await _dbcontext.Clients.Where(x => x.isDeleted == false).FirstOrDefaultAsync(x => x.Id == id);
+        }
+
         public async Task<Clients> UpdateClients(int id, Clients clients)
         {
 

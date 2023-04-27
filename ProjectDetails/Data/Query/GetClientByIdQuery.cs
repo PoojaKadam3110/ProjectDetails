@@ -27,9 +27,9 @@ namespace ProjectDetailsAPI.Data.Query
 
         public async Task<QueryResponse> Handle(GetClientByIdQuery request, CancellationToken cancellationToken)
         {
-                      
-            var data = await _dbcontext.Clients.Where(x => x.isDeleted == false).FirstOrDefaultAsync(x => x.Id == request.id);
-           
+
+            var data = await _clientRepository.GetUsersById(request.id);
+
             return new QueryResponse()
             {
                 Data = data ?? default,
