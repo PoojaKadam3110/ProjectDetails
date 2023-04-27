@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using ProjectDetailsAPI.Common;
 using ProjectDetailsAPI.Models.Domain;
 using ProjectDetailsAPI.Services;
 
@@ -21,6 +22,25 @@ namespace ProjectDetailsAPI.Controllers
 
             return Ok(clientsFromRepo);
         }
+
+        //[HttpGet("/api/Clients/List")]
+        //public ActionResult<QueryResponse> Get()
+        //{
+        //    var clientsFromRepo = _unitOfWork.Clients.GetAll().Where(x => x.isDeleted == false);
+
+        //    if (clientsFromRepo != null)
+        //    {
+        //        return new QueryResponse()
+        //        {
+        //            Data = clientsFromRepo.Any() ? clientsFromRepo : default,
+        //            IsSuccessful = clientsFromRepo.Any(),
+        //            Errors = clientsFromRepo.Any() ? default : new() { $"No Matching Records Found !!!" }
+        //        };
+        //    }
+
+        //    return Ok("Data is not found here");
+
+        //}
         [HttpGet("/api/Clients/By/Id")]
         public ActionResult GetById(int id)
         {

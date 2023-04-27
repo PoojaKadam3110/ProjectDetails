@@ -26,7 +26,6 @@ namespace ProjectDetailsAPI.Implementation
             {
                 throw new ArgumentNullException("entities");
             }
-            //entities.Add(entity);   //for adding
             _dbContext.Set<T>().Add(entity);
             _dbContext.SaveChanges();
         }
@@ -43,12 +42,12 @@ namespace ProjectDetailsAPI.Implementation
 
         public IEnumerable<T> GetAll()
         {
-            return _dbContext.Set<T>().ToList();        //.Where(x => x.isDeleted == false)
+            return _dbContext.Set<T>().ToList();        
         }
 
         public T GetById(int id)
         {
-            return _dbContext.Set<T>().Find(id);        //Where(id.isDeleted == false).
+            return _dbContext.Set<T>().Find(id);
         }
 
         public void SoftDelete(T Entity)

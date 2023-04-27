@@ -56,9 +56,10 @@ namespace ProjectDetailsAPI.Controllers
 
         public async Task<Clients> AddClients(Clients clients)
         {
-            await _dbcontext.Clients.AddAsync(clients);
-            await _dbcontext.SaveChangesAsync();
-
+            var response = await _mediator.Send(new AddClientCommand
+            {
+                clients = clients
+            });
             return clients;
         }
 
@@ -105,50 +106,63 @@ namespace ProjectDetailsAPI.Controllers
         //}
 
 
-        [HttpPut("/api/Projects/Clients/By/Id")]
+        [HttpPut("/api/Projects/Clients")]
         [ValidateModule]
         //[HttpPut]
         //[Route("{id:int}")]
         public async Task<Clients> UpdateClients(int id,Clients clients)
         {
-            var existingClient = await _dbcontext.Clients.FirstOrDefaultAsync(x => x.Id == id);
-
-            if (existingClient == null) 
+            var response = await _mediator.Send(new UpdateClientsCommand
             {
-                return null;
-            }
-            existingClient.ClientName = clients.ClientName;
-            existingClient.UpdatedDate = clients.UpdatedDate;
-            existingClient.isDeleted = clients.isDeleted;
-            existingClient.CreatedBy = clients.CreatedBy;
-            existingClient.UpdatedBy = clients.UpdatedBy;
+                id = id,
+                clients = clients
+            });
 
-            await _dbcontext.SaveChangesAsync();
+            return clients;
+            //return Ok("Client updated successfully!!!");
 
-            return existingClient;
+
+            //var existingClient = await _dbcontext.Clients.FirstOrDefaultAsync(x => x.Id == id);
+
+            //if (existingClient == null)
+            //{
+            //    return null;
+            //}
+            //existingClient.ClientName = clients.ClientName;
+            //existingClient.UpdatedDate = clients.UpdatedDate;
+            //existingClient.isDeleted = clients.isDeleted;
+            //existingClient.CreatedBy = clients.CreatedBy;
+            //existingClient.UpdatedBy = clients.UpdatedBy;
+
+            //await _dbcontext.SaveChangesAsync();
+
+            //return existingClient;
         }
 
-        [HttpDelete("/api/Projects/Clients/Delete/By/Id")]
+        [HttpDelete("/api/Projects/Clients/Delete")]
         [ValidateModule]
         //[HttpDelete]        
         //[Route("{id:int}")]
 
-        public async Task<Clients?> SoftDeleteClient(int id)
+        public async Task<IActionResult> SoftDeleteClient(int id)
         {
-            var existingClient = await _dbcontext.Clients.FirstOrDefaultAsync(x => x.Id == id);
-
-            if(existingClient == null)
+            var response = await _mediator.Send(new DeleteClientByIdQueryCommand
             {
-                return null;
-            }
+                id = id
+            });
+            return Ok(response);
+            //var existingClient = await _dbcontext.Clients.FirstOrDefaultAsync(x => x.Id == id);
 
-            existingClient.isDeleted = true;
+            //if(existingClient == null)
+            //{
+            //    return null;
+            //}
 
-            await _dbcontext.SaveChangesAsync();    
+            //existingClient.isDeleted = true;
 
-            return existingClient;
-            //return response()->json("User deleted successfully!!!");
-            //return Ok("User deleted successfully!!!");
+            //await _dbcontext.SaveChangesAsync();    
+
+            //return existingClient;
         }
     }
 }
