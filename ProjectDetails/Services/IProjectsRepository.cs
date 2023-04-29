@@ -3,7 +3,7 @@ using ProjectDetailsAPI.Models.Domain;
 
 namespace ProjectDetailsAPI.Services
 {
-    public interface IProjectsRepository : IGenericRepository<Projects>
+    public interface IProjectsRepository : IGenericRepository<Clients>
     {
     }
 }

@@ -4,7 +4,7 @@ using ProjectDetailsAPI.Services;
 
 namespace ProjectDetailsAPI.Implementation
 {
-    public class ProjectsRepository : GenericRepository<Projects>, IProjectsRepository
+    public class ProjectsRepository : GenericRepository<Clients>, IProjectsRepository
     {
         private readonly ProjectDetailsDbContext _dbcontext;
         public ProjectsRepository(ProjectDetailsDbContext projectDetailsDbContext) : base(projectDetailsDbContext)

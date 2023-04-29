@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ProjectDetailsAPI.Data;
 
@@ -11,9 +12,11 @@ using ProjectDetailsAPI.Data;
 namespace ProjectDetailsAPI.Migrations
 {
     [DbContext(typeof(ProjectDetailsDbContext))]
-    partial class ProjectDetailsDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230428132816_Create Projects tbl to DB")]
+    partial class CreateProjectstbltoDB
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

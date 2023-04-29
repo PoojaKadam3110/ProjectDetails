@@ -7,9 +7,11 @@ using Microsoft.OpenApi.Models;
 using ProjectDetailsAPI.Data;
 using ProjectDetailsAPI.GenericRepo;
 using ProjectDetailsAPI.Implementation;
+using ProjectDetailsAPI.Implementation.ProjectsImp;
 using ProjectDetailsAPI.Mappings;
 using ProjectDetailsAPI.Repositories;
 using ProjectDetailsAPI.Services;
+using ProjectDetailsAPI.Services.IProjects;
 using System.Reflection;
 using System.Text;
 
@@ -75,6 +77,8 @@ builder.Services.AddScoped<ITokenRepository, TokenRepository>(); //for token cre
 builder.Services.AddTransient<IUnitOfWork, UnitOfWork>();
 
 builder.Services.AddTransient<IClientRepository,ClientRepository>(); //becoz i have added this before thats why this line needed
+//builder.Services.AddTransient<IProjectTestRepository, ProjectTestRepository>(); //becoz i have added this before thats why this line needed
+builder.Services.AddTransient<IAddProjectsRepository, AddProjectsRepository>(); //becoz i have added this before thats why this line needed
 
 
 //For Generic Repository

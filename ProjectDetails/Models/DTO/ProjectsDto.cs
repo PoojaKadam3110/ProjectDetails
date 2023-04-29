@@ -1,8 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace ProjectDetailsAPI.Models.Domain
+namespace ProjectDetailsAPI.Models.DTO
 {
-    public class Projects
+    public class ProjectsDto
     {
         [Key]
         public int Id { get; set; }

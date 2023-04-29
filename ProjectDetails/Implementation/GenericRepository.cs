@@ -15,11 +15,6 @@ namespace ProjectDetailsAPI.Implementation
         {
             _dbContext = projectDetailsDbContext;
         }
-        //public void Add(T Entity)
-        //{
-        //    _dbContext.Set<T>().Add(Entity);
-        //}
-
         public void Add(T entity)
         {
             if (entity == null)

@@ -1,12 +1,9 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace ProjectDetailsAPI.Models.Domain
+namespace ProjectDetailsAPI.Models.DTO
 {
-    public class Projects
+    public class UpdateProjectDto
     {
-        [Key]
-        public int Id { get; set; }
-        [Required]
         public string ProjectName { get; set; }
         public string ClientName { get; set; }
         public double projectCost { get; set; }

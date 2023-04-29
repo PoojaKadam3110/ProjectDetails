@@ -75,7 +75,6 @@ namespace ProjectDetailsAPI.Services
 
         public async Task<Clients> UpdateClients(int id, Clients clients)
         {
-
             var existingClient = await _dbcontext.Clients.FirstOrDefaultAsync(x => x.Id == id);
 
             if (existingClient == null)

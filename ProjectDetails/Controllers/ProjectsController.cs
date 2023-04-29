@@ -21,148 +21,159 @@ namespace ProjectDetailsAPI.Controllers
         private readonly ProjectDetailsDbContext _dbcontext;
         private readonly IMapper _mapper;
         private readonly IMediator _mediator;
-        //private readonly IProjectRepository _projectRepository;
-        //private readonly IRepo<T> _repo;          //For generic
-        public ProjectsController(ProjectDetailsDbContext projectDetailsDbContext, IMapper mapper, IMediator mediator)//,IMediator mediator , IRepo<T> repo
+        private readonly IUnitOfWork _unitOfWork;
+        public ProjectsController(ProjectDetailsDbContext projectDetailsDbContext, IMapper mapper, IMediator mediator,IUnitOfWork unitOfWork)//,IMediator mediator , IRepo<T> repo
         {
             _dbcontext = projectDetailsDbContext;
             _mapper = mapper;
             _mediator = mediator;
-            //_projectRepository = projectRepository;
-            //_repo = repo;               //For generic
-                                             // this._mediator = mediator;
+            _unitOfWork = unitOfWork;
         }
 
-        //[HttpGet]
-        //public async Task<IEnumerable<Clients>> GetClients() => await _mediator.Send(new GetClients.Query());
- 
 
-        [HttpGet("/api/Projects/Clients/List")]
-        //public async Task<ActionResult<List<Clients>>> GetClientsDetails()
-        public async Task<ActionResult<List<Clients>>> GetAll()
-        {            
-            var clientsDetails =await _mediator.Send(new GetClientsQuery());
-            // return await _dbcontext.Clients.Where(x => x.isDeleted == false).ToListAsync();
-            return Ok(clientsDetails);
-        }
-        //public List<T> GetAll()
-        //{
-        //    //return await _dbcontext.Clients.Where(x => x.isDeleted == false).ToListAsync();
-        //    return _repo.GetAll();
-        //}
-
-        [HttpPost("/api/Projects/Client/Create")]
-        [ValidateModule]
-
-        public async Task<Clients> AddClients(Clients clients)
+        [HttpGet("/api/Projects/List")]
+        public ActionResult Get()
         {
-            var response = await _mediator.Send(new AddClientCommand
+            var clientsFromRepo = _unitOfWork.Projects.GetAll().Where(x => x.isDeleted == false);
+
+            return Ok(clientsFromRepo);
+        }
+
+      
+        [HttpPost("/api/Projects/Create")]
+        [ValidateModule]
+        public async Task<Projects> AddProjects(Projects projects)
+        {
+            var response = await _mediator.Send(new AddProjectsCommand
             {
-                clients = clients
+                projects = projects
             });
-            return clients;
-        }
 
-        [HttpGet("/api/Projects/Client/ById")]   //("/api/Projects/Client/ById")
-        [ValidateModule]
-        //[Route("{id:int}")]
-        public async Task<IActionResult> GetClientsDetailsById(int id)
-        {
-            var response = await _mediator.Send(new GetClientByIdQuery
+            if (response.IsSuccessful == false)
             {
-                id = id
-            });
-            return Ok(response);
+                return null;
+            }
+            return projects;
         }
-        //}
-        //[ValidateModule]
-        //[Route("{id:int}")]
-
-        //public async Task<Clients> AddClients(Clients clients)
-        //{
-        //    var addClient = await _mediator.Send(new AddClientCommand
-        //    {
-        //        _dbcontext.Clients = clients
-        //    });
-        //    //await _dbcontext.Clients.AddAsync(clients);
-        //    //await _dbcontext.SaveChangesAsync();
-
-        //    return addClient;
-        //}
-
-        //public async Task<Clients> GetClientsDetailsById(int id)
-        //{           
-        //    var clientsDetailsById = await _mediator.Send(new GetClientsQuery())
-        //    {
-        //        id = id;
-        //    };
-
-        //    return Ok(clientsDetailsById);
-
-        //    //return await _dbcontext.Clients.Where(x => x.isDeleted == false).FirstOrDefaultAsync(x => x.Id == id);
-        //    // return await _dbcontext.Clients.Where(x => x.isDeleted == false).ToListAsync();
-        //    //var clientsDetailsforId = await _mediator.(new GetClientsQuery());
-        //    //return Ok(clientsDetailsforId);
-        //}
-
-
-        [HttpPut("/api/Projects/Clients")]
-        [ValidateModule]
-        //[HttpPut]
-        //[Route("{id:int}")]
-        public async Task<Clients> UpdateClients(int id,Clients clients)
+        
+        [HttpGet("/api/Projects/By/Id")]
+        public ActionResult GetById(int id)
         {
-            var response = await _mediator.Send(new UpdateClientsCommand
+            var clientsFromRepo = _unitOfWork.Projects.GetById(id);
+            if (clientsFromRepo == null || clientsFromRepo.isDeleted == true)
+            {
+                return NotFound("data may be deleted Or not inserted yet,please try again");
+            }
+
+            return Ok(clientsFromRepo);
+        }
+
+
+        [HttpPut("/api/Projects/Update/By/Id")]
+        [ValidateModule]
+        public async Task<Projects> UpdateProjects(int id, Projects projects)
+        {
+            var response = await _mediator.Send(new UpdateProjectsCommand
             {
                 id = id,
-                clients = clients
+                projects = projects
             });
 
-            return clients;
-            //return Ok("Client updated successfully!!!");
+            if(response.IsSuccessful == false)
+            {
+                return null;
+            }
 
-
-            //var existingClient = await _dbcontext.Clients.FirstOrDefaultAsync(x => x.Id == id);
-
-            //if (existingClient == null)
-            //{
-            //    return null;
-            //}
-            //existingClient.ClientName = clients.ClientName;
-            //existingClient.UpdatedDate = clients.UpdatedDate;
-            //existingClient.isDeleted = clients.isDeleted;
-            //existingClient.CreatedBy = clients.CreatedBy;
-            //existingClient.UpdatedBy = clients.UpdatedBy;
-
-            //await _dbcontext.SaveChangesAsync();
-
-            //return existingClient;
+            return projects;
         }
 
-        [HttpDelete("/api/Projects/Clients/Delete")]
+        [HttpDelete("/api/Projects/Delete/By/Id")]
         [ValidateModule]
-        //[HttpDelete]        
-        //[Route("{id:int}")]
-
-        public async Task<IActionResult> SoftDeleteClient(int id)
+        public async Task<IActionResult> SoftDeleteProject(int id)
         {
-            var response = await _mediator.Send(new DeleteClientByIdQueryCommand
+            var response = await _mediator.Send(new DeleteProjectByIdCommand
             {
                 id = id
             });
-            return Ok(response);
-            //var existingClient = await _dbcontext.Clients.FirstOrDefaultAsync(x => x.Id == id);
-
-            //if(existingClient == null)
-            //{
-            //    return null;
-            //}
-
-            //existingClient.isDeleted = true;
-
-            //await _dbcontext.SaveChangesAsync();    
-
-            //return existingClient;
+            if(response == null)
+            {
+                return NotFound();
+            }
+            return Ok(response);            //Ok("project deleted successfully!!!");
         }
     }
 }
+
+
+
+
+
+
+//[HttpGet]
+//public async Task<IEnumerable<Clients>> GetClients() => await _mediator.Send(new GetClients.Query());
+
+
+//[HttpGet("/api/Projects/Clients/List")]
+//public async Task<ActionResult<List<Clients>>> GetAll()
+//{            
+//    var clientsDetails =await _mediator.Send(new GetClientsQuery());
+//    // return await _dbcontext.Clients.Where(x => x.isDeleted == false).ToListAsync();
+//    return Ok(clientsDetails);
+//}
+
+//[HttpGet("/api/Projects/List")]
+//public ActionResult Get()
+//{
+//    var clientsFromRepo = _unitOfWork.Projects.GetAll().Where(x => x.isDeleted == false);
+
+//    return Ok(clientsFromRepo);
+//}
+
+//[HttpPost("/api/Projects/Client/Create")]
+//[ValidateModule]
+
+//public async Task<Clients> AddClients(Clients clients)
+//{
+//    var response = await _mediator.Send(new AddClientCommand
+//    {
+//        clients = clients
+//    });
+//    return clients;
+//}
+
+
+//[HttpGet("/api/Projects/Client/ById")]   //("/api/Projects/Client/ById")
+//[ValidateModule]
+////[Route("{id:int}")]
+//public async Task<IActionResult> GetClientsDetailsById(int id)
+//{
+//    var response = await _mediator.Send(new GetClientByIdQuery
+//    {
+//        id = id
+//    });
+//    return Ok(response);
+//}
+//[HttpPut("/api/Projects/Clients")]
+//[ValidateModule]
+//public async Task<Clients> UpdateClients(int id,Clients clients)
+//{
+//    var response = await _mediator.Send(new UpdateClientsCommand
+//    {
+//        id = id,
+//        clients = clients
+//    });
+
+//    return clients;        
+//}
+//[HttpDelete("/api/Projects/Clients/Delete")]
+//[ValidateModule]
+//public async Task<IActionResult> SoftDeleteClient(int id)
+//{
+//    var response = await _mediator.Send(new DeleteClientByIdQueryCommand
+//    {
+//        id = id
+//    });
+//    return Ok(response);
+//}
+
+
