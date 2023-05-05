@@ -48,7 +48,7 @@ namespace ProjectDetailsAPI.Controllers
     //    public ActionResult GetById(int id)
     //    {
     //        var clientsFromRepo = _unitOfWork.Clients.GetById(id);
-    //        if(clientsFromRepo == null || clientsFromRepo.isDeleted == true)
+    //        if (clientsFromRepo == null || clientsFromRepo.isDeleted == true)
     //        {
     //            return NotFound("data may be deleted,please try with another id");
     //        }
@@ -60,7 +60,7 @@ namespace ProjectDetailsAPI.Controllers
     //    public ActionResult AddClient(Clients clients)
     //    {
     //        _unitOfWork.Clients.Add(clients);
-    //        return Ok("User Added successfully");    
+    //        return Ok("User Added successfully");
     //    }
 
     //    [HttpPut("/api/clients/Update")]

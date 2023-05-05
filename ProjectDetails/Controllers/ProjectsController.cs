@@ -32,9 +32,9 @@ namespace ProjectDetailsAPI.Controllers
 
 
         [HttpGet("/api/Projects/List")]
-        public ActionResult Get()
+        public ActionResult Get([FromQuery] int pageNumber = 1, int pageSize = 1000)
         {
-            var clientsFromRepo = _unitOfWork.Projects.GetAll().Where(x => x.isDeleted == false);
+            var clientsFromRepo = _unitOfWork.Projects.GetAll(pageNumber, pageSize).Where(x => x.isDeleted == false);
 
             return Ok(clientsFromRepo);
         }

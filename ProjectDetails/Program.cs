@@ -15,7 +15,19 @@ using ProjectDetailsAPI.Services.IProjects;
 using System.Reflection;
 using System.Text;
 
+// for cors
+var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
 var builder = WebApplication.CreateBuilder(args);
+
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(name: MyAllowSpecificOrigins,
+                      policy =>
+                      {
+                          policy.WithOrigins("http://localhost:3000");
+                      });
+});
 
 //For MediatR
 builder.Services.AddMediatR(Assembly.GetExecutingAssembly());
@@ -61,7 +73,7 @@ builder.Services.AddSwaggerGen(options =>
 
 // For DbContext()
 builder.Services.AddDbContext<ProjectDetailsDbContext>(options =>
-options.UseSqlServer(builder.Configuration.GetConnectionString("ProjectDetailsConnectionStrings")));
+ options.UseSqlServer(builder.Configuration.GetConnectionString("ProjectDetailsConnectionStrings")));
 // For AuthDbContext()
 builder.Services.AddDbContext<ProjectDetailsAuthDbContext>(options =>
 options.UseSqlServer(builder.Configuration.GetConnectionString("ProjectsAuthConnectionStrings")));
@@ -136,6 +148,9 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseAuthentication(); //for Authentication
+
+
+app.UseCors(MyAllowSpecificOrigins);
 
 app.UseAuthorization();
 

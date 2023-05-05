@@ -35,9 +35,10 @@ namespace ProjectDetailsAPI.Implementation
            return _dbContext.Set<T>().Where(predicate);
         }
 
-        public IEnumerable<T> GetAll()
+        public IEnumerable<T> GetAll(int pageNumber = 1, int pageSize = 1000)
         {
-            return _dbContext.Set<T>().ToList();        
+            var skipResults = (pageNumber - 1) * pageSize;
+            return _dbContext.Set<T>().Skip(skipResults).Take(pageSize).ToList();        
         }
 
         public T GetById(int id)
