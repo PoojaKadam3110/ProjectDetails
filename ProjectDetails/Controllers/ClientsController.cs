@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ProjectDetailsAPI.Common;
 using ProjectDetailsAPI.Models.Domain;
@@ -8,6 +9,7 @@ namespace ProjectDetailsAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize(Roles = "Admin")]
     public class ClientsController : ControllerBase
     {
     }
@@ -21,7 +23,15 @@ namespace ProjectDetailsAPI.Controllers
     //    [HttpGet("/api/Clients/List")]
     //    public ActionResult Get()
     //    {
-    //        var clientsFromRepo = _unitOfWork.Roles.GetAll().Where(x => x.isDeleted == false);
+    //        var clientsFromRepo = _unitOfWork.Clients.GetAll().Where(x => x.isDeleted == false);
+
+    //        return Ok(clientsFromRepo);
+    //    }
+
+    //    [HttpGet("/api/Clients/UsersList")]
+    //    public ActionResult GetAllUsers()
+    //    {
+    //        var clientsFromRepo = _unitOfWork.Users.GetAll().Where(x => x.isDeleted == false);
 
     //        return Ok(clientsFromRepo);
     //    }
@@ -50,7 +60,7 @@ namespace ProjectDetailsAPI.Controllers
     //        var clientsFromRepo = _unitOfWork.Clients.GetById(id);
     //        if (clientsFromRepo == null || clientsFromRepo.isDeleted == true)
     //        {
-    //            return NotFound("data may be deleted,please try with another id");
+    //            return NotFound("Id " + id + " Not found may be deleted Or not inserted yet,please try again");
     //        }
 
     //        return Ok(clientsFromRepo);
@@ -60,21 +70,21 @@ namespace ProjectDetailsAPI.Controllers
     //    public ActionResult AddClient(Clients clients)
     //    {
     //        _unitOfWork.Clients.Add(clients);
-    //        return Ok("User Added successfully");
+    //        return Ok("Client Added successfully and Id of newly added client is " + clients.Id);
     //    }
 
     //    [HttpPut("/api/clients/Update")]
     //    public ActionResult Update(Clients clients)
     //    {
     //        _unitOfWork.Clients.Update(clients);
-    //        return Ok("User Updated successfully");
+    //        return Ok("Client Updated successfully Of Id: " + clients.Id);
     //    }
 
     //    [HttpDelete("/api/clients/Delete")]
     //    public ActionResult Delete(Clients clients)
     //    {
     //        _unitOfWork.Clients.SoftDelete(clients);
-    //        return Ok("User Deleted successfully");
+    //        return Ok("Client Deleted successfully Of Id: " + clients.Id);
     //    }
     //}
 }

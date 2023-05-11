@@ -19,7 +19,7 @@ namespace ProjectDetailsAPI.Models.Domain
         public DateTime UpdatedDate { get; set; }
         public string? UpdatedBy { get; set; }
         //Navigation Property
-        public IEnumerable<Projects> IntProjects1 { get; set; }
+        //public IEnumerable<Projects> IntProjects1 { get; set; }
 
     }
 }

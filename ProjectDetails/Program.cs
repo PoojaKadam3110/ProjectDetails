@@ -25,7 +25,8 @@ builder.Services.AddCors(options =>
     options.AddPolicy(name: MyAllowSpecificOrigins,
                       policy =>
                       {
-                          policy.WithOrigins("http://localhost:3000");
+                          //policy.WithOrigins("https://projectdetails.azurewebsites.net");
+                          policy.WithOrigins("http://localhost:3000").AllowAnyHeader().WithMethods("POST", "PUT", "DELETE", "GET");
                       });
 });
 
@@ -76,7 +77,7 @@ builder.Services.AddDbContext<ProjectDetailsDbContext>(options =>
  options.UseSqlServer(builder.Configuration.GetConnectionString("ProjectDetailsConnectionStrings")));
 // For AuthDbContext()
 builder.Services.AddDbContext<ProjectDetailsAuthDbContext>(options =>
-options.UseSqlServer(builder.Configuration.GetConnectionString("ProjectsAuthConnectionStrings")));
+options.UseSqlServer(builder.Configuration.GetConnectionString("ProjectsAuthConnectionStrings"))); 
 
 //add repositories 
 //builder.Services.AddScoped<IRegionRepository, SQLRegionRepository>(); //also write 2nd para is InMemoryRegionRepository to show data insite that class
@@ -134,6 +135,8 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         IssuerSigningKey = new SymmetricSecurityKey(
             Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
     });
+
+
 
 //End of Authentication
 
