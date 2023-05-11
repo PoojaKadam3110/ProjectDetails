@@ -47,8 +47,8 @@ namespace ProjectDetailsAPI.Controllers
         //    return Ok(clientsfromrepo);
         //}
 
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        //[ProducesResponseType(StatusCodes.Status200OK)]
+        //[ProducesResponseType(StatusCodes.Status400BadRequest)]
         [HttpGet("/api/Projects/List")]
         public async Task<IActionResult> GetAll([FromQuery] string? filterOn, [FromQuery] string? filterQuery, [FromQuery] string? sortBy, [FromQuery] bool? isAscending, [FromQuery] int pageNumber = 1, int pageSize = 1000) //modified thid method for filtering middle two para for sorting and last two for paggination
         {
@@ -61,10 +61,10 @@ namespace ProjectDetailsAPI.Controllers
 
         [HttpGet("/api/Projects/Clients/List")]
         //[Authorize(Roles = "Admin")]
-        public ActionResult Get()
+        public ActionResult Get([FromQuery] int pageNumber = 1, int pageSize = 1000)
         {
-            var clientsFromRepo = _unitOfWork.Clients.GetAll().Where(x => x.isDeleted == false);
-
+            var clientsFromRepo = _unitOfWork.Clients.GetAll(pageNumber, pageSize).Where(x => x.isDeleted == false);
+           
             return Ok(clientsFromRepo);
         }
 
