@@ -92,10 +92,23 @@ namespace ProjectDetailsAPI.Implementation.ProjectsImp
             existingProject.ratePerHour = projects.ratePerHour;
             existingProject.description = projects.description;
             existingProject.ClientName = projects.ClientName;
+            existingProject.CreatedDate = projects.CreatedDate;
+            existingProject.UpdatedDate = DateTime.Now;
 
             await _dbcontext.SaveChangesAsync();
 
             return existingProject;
+        }
+
+        public  int GetRecordCount()
+        {
+            int count = _dbcontext.Projects.Where(x => x.isDeleted == false).Count();
+            return count;
+        }
+        public  int GetDeletedRecordCount()
+        {
+            int count = _dbcontext.Projects.Where(x => x.isDeleted == true).Count();
+            return count;
         }
     }
 }

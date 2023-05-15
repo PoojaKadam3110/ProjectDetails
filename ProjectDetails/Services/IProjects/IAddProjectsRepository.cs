@@ -10,5 +10,8 @@ namespace ProjectDetailsAPI.Services.IProjects
         Task<Projects> DeleteProjectById(int id);
         Task<Projects> AddProjects(Projects projects);
         Task<Projects> UpdateProject(int id, Projects projects);
+
+        int GetRecordCount();
+        int GetDeletedRecordCount();
     }
 }

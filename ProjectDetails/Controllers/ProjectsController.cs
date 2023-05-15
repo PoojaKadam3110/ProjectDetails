@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using MySqlX.XDevAPI;
 using ProjectDetailsAPI.CustomeActionFilters;
 using ProjectDetailsAPI.Data;
 using ProjectDetailsAPI.Data.Command;
@@ -27,7 +28,7 @@ namespace ProjectDetailsAPI.Controllers
         private readonly IUnitOfWork _unitOfWork;
         private IAddProjectsRepository dataStore;
 
-        public ProjectsController(ProjectDetailsDbContext projectDetailsDbContext, IMapper mapper, IMediator mediator,IUnitOfWork unitOfWork,IAddProjectsRepository addProjectsRepository)//,IMediator mediator , IRepo<T> repo
+        public ProjectsController(ProjectDetailsDbContext projectDetailsDbContext, IMapper mapper, IMediator mediator, IUnitOfWork unitOfWork, IAddProjectsRepository addProjectsRepository)//,IMediator mediator , IRepo<T> repo
         {
             _dbcontext = projectDetailsDbContext;
             _mapper = mapper;
@@ -37,26 +38,53 @@ namespace ProjectDetailsAPI.Controllers
 
         }
 
-        //[ProducesResponseType(StatusCodes.Status200OK)]
-        //[ProducesResponseType(StatusCodes.Status400BadRequest)]
-        //[HttpGet("/api/projects/list")]
-        //public async Task<IActionResult> Get([FromQuery] int pagenumber = 1, int pagesize = 1000)
-        //{
-        //    var clientsfromrepo = _unitOfWork.Projects.GetAll(pagenumber, pagesize).Where(x => x.isDeleted == false);
-
-        //    return Ok(clientsfromrepo);
-        //}
-
-        //[ProducesResponseType(StatusCodes.Status200OK)]
-        //[ProducesResponseType(StatusCodes.Status400BadRequest)]
         [HttpGet("/api/Projects/List")]
         public async Task<IActionResult> GetAll([FromQuery] string? filterOn, [FromQuery] string? filterQuery, [FromQuery] string? sortBy, [FromQuery] bool? isAscending, [FromQuery] int pageNumber = 1, int pageSize = 1000) //modified thid method for filtering middle two para for sorting and last two for paggination
         {
             var projectsDomainModel = await dataStore.GetAll(filterOn, filterQuery, sortBy, isAscending ?? true, pageNumber, pageSize);
 
             var result = projectsDomainModel.Where(x => x.isDeleted == false);
-            return Ok(result);
+            if (result != null && result.Any())
+            {
+                return Ok(result);
+            }
+            else
+            {
+                return NotFound("This Project Name is not present in the database, please enter other name!!!!");
+            }
+
         }
+
+        [HttpGet("ProjectsCount")]
+        [Authorize(Roles = "Admin")]
+        public IActionResult GetRecordCountProjects()
+        {
+            // Retrieve the count of records from the database
+            int count = dataStore.GetRecordCount();
+
+            // Return the count as a response to the client browser
+            return Ok("Number of projects present in the database is: " + count);
+        }
+
+        [HttpGet("DeletedProjectsCount")]
+        [Authorize(Roles = "Admin")]
+        public IActionResult GetDeletedRecordCountProjects()
+        {
+            // Retrieve the count of records from the database
+            int count = dataStore.GetDeletedRecordCount();
+
+            // Return the count as a response to the client browser
+            return Ok("Number of projects Deleted: " + count);
+        }
+
+
+        //[HttpGet("/api/Projects/Users/List")]
+        //public ActionResult GetAllUsers()
+        //{
+        //    var clientsFromRepo = _unitOfWork.Users.GetAll().Where(x => x.isDeleted == false);
+
+        //    return Ok(clientsFromRepo);
+        //}
 
 
         [HttpGet("/api/Projects/Clients/List")]
@@ -64,13 +92,13 @@ namespace ProjectDetailsAPI.Controllers
         public ActionResult Get([FromQuery] int pageNumber = 1, int pageSize = 1000)
         {
             var clientsFromRepo = _unitOfWork.Clients.GetAll(pageNumber, pageSize).Where(x => x.isDeleted == false);
-           
+
             return Ok(clientsFromRepo);
         }
 
         [HttpPost("/api/Projects/AddProjects")]
         [ValidateModule]
-        public async Task<Projects> AddProjects(Projects projects)
+        public async Task<ActionResult<Projects>> AddProjects(Projects projects)
         {
             var response = await _mediator.Send(new AddProjectsCommand
             {
@@ -81,16 +109,18 @@ namespace ProjectDetailsAPI.Controllers
             {
                 return null;
             }
-            return projects;
+            //return projects;
+            //return CreatedAtAction(nameof(GetById), new { id = projects.Id }, projects);
+            return CreatedAtAction("GetById", new { id = projects.Id }, projects);
         }
-        
+
         [HttpGet("/api/Projects/By/Id")]
         public ActionResult GetById(int id)
         {
             var clientsFromRepo = _unitOfWork.Projects.GetById(id);
             if (clientsFromRepo == null || clientsFromRepo.isDeleted == true)
             {
-                return NotFound("Id " +id + " Not found may be deleted Or not inserted yet,please try again");
+                return NotFound("Id " + id + " Not found may be deleted Or not inserted yet,please try again");
             }
 
             return Ok(clientsFromRepo);
@@ -107,7 +137,7 @@ namespace ProjectDetailsAPI.Controllers
                 projects = projects
             });
 
-            if(response.IsSuccessful == false)
+            if (response.IsSuccessful == false)
             {
                 return null;
             }
@@ -123,7 +153,7 @@ namespace ProjectDetailsAPI.Controllers
             {
                 id = id
             });
-            if(response == null)
+            if (response == null)
             {
                 return NotFound();
             }
@@ -131,6 +161,36 @@ namespace ProjectDetailsAPI.Controllers
         }
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

@@ -20,7 +20,7 @@ namespace ProjectDetailsAPI.Controllers
         {
             _unitOfWork = unitOfWork;
         }
-        
+
         [HttpGet("/api/Clients/List")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -70,10 +70,14 @@ namespace ProjectDetailsAPI.Controllers
         }
 
         [HttpPost("/api/clients/Add")]
+        //[ProducesResponseType(StatusCodes.Status201Created)]
+        //[ProducesResponseType(StatusCodes.Status400BadRequest)]
         public ActionResult AddClient(Clients clients)
         {
             _unitOfWork.Clients.Add(clients);
-            return Ok("Client Added successfully and Id of newly added client is " + clients.Id);
+            //return Ok("Client Added successfully and Id of newly added client is " + clients.Id);
+            // return Created("~/api/Clients/By/Id"+clients.Id, clients);
+            return CreatedAtAction("GetById", new { id = clients.Id }, clients);
         }
 
         [HttpPut("/api/clients/Update")]

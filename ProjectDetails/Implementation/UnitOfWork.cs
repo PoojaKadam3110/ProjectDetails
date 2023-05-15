@@ -14,7 +14,6 @@ namespace ProjectDetailsAPI.Implementation
             _dbcontext = context;
             Clients = new ClientGenRepository(_dbcontext);
             Users = new UsersRepository(_dbcontext);
-            //Projects = new ProjectsRepository(_dbcontext);
             Projects = new ProjectTestRepository(_dbcontext);
             Roles = new RoleRepository(_dbcontext);
         }
