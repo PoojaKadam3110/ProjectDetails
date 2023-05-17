@@ -32,7 +32,7 @@ namespace ProjectDetailsAPI.Data.Command
             {
                 Data = addProject ?? default,
                 IsSuccessful = addProject != null,
-                Errors = addProject != null ? default : new() { $"You Can not insert new Project!!!" }
+                Errors = addProject != null ? default : new() { $"You Can not adding new Project" }
             };
         }
     }

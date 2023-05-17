@@ -54,8 +54,47 @@ namespace ProjectDetailsAPI.Controllers
             }
 
         }
+        [HttpPost("/api/Projects/AddProjects")]
+        [ValidateModule]
+        public async Task<ActionResult<Projects>> AddProjects(Projects projects)
+        {
+            var response = await _mediator.Send(new AddProjectsCommand
+            {
+                projects = projects
+            });
 
-        [HttpGet("ProjectsCount")]
+            if (response.IsSuccessful == false)
+            {
+                return null;
+            }
+            var someFieldsDto = new Projects
+            {
+                isActive = projects.isActive,
+                isDeleted = projects.isDeleted,
+                CreatedDate = DateTime.Now,
+                UpdatedDate = DateTime.Now,
+                CreatedBy = projects.CreatedBy,
+                UpdatedBy = projects.UpdatedBy
+            };
+            //return projects;
+            //return CreatedAtAction(nameof(GetById), new { id = projects.Id }, projects);
+            return CreatedAtAction("GetById", new { id = projects.Id }, projects);
+        }
+
+        [HttpGet("/api/Projects/By/Id")]
+        public ActionResult GetById(int id)
+        {
+            var clientsFromRepo = _unitOfWork.Projects.GetById(id);
+            if (clientsFromRepo == null || clientsFromRepo.isDeleted == true)
+            {
+                return NotFound("Id " + id + " Not found may be deleted Or not inserted yet,please try again");
+            }
+
+            return Ok(clientsFromRepo);
+        }
+
+
+        [HttpGet("ActiveProjectsCount")]
         [Authorize(Roles = "Admin")]
         public IActionResult GetRecordCountProjects()
         {
@@ -94,38 +133,7 @@ namespace ProjectDetailsAPI.Controllers
             var clientsFromRepo = _unitOfWork.Clients.GetAll(pageNumber, pageSize).Where(x => x.isDeleted == false);
 
             return Ok(clientsFromRepo);
-        }
-
-        [HttpPost("/api/Projects/AddProjects")]
-        [ValidateModule]
-        public async Task<ActionResult<Projects>> AddProjects(Projects projects)
-        {
-            var response = await _mediator.Send(new AddProjectsCommand
-            {
-                projects = projects
-            });
-
-            if (response.IsSuccessful == false)
-            {
-                return null;
-            }
-            //return projects;
-            //return CreatedAtAction(nameof(GetById), new { id = projects.Id }, projects);
-            return CreatedAtAction("GetById", new { id = projects.Id }, projects);
-        }
-
-        [HttpGet("/api/Projects/By/Id")]
-        public ActionResult GetById(int id)
-        {
-            var clientsFromRepo = _unitOfWork.Projects.GetById(id);
-            if (clientsFromRepo == null || clientsFromRepo.isDeleted == true)
-            {
-                return NotFound("Id " + id + " Not found may be deleted Or not inserted yet,please try again");
-            }
-
-            return Ok(clientsFromRepo);
-        }
-
+        }      
 
         [HttpPut("/api/Projects/Update/By/Id")]
         [ValidateModule]
@@ -161,13 +169,6 @@ namespace ProjectDetailsAPI.Controllers
         }
     }
 }
-
-
-
-
-
-
-
 
 
 
