@@ -19,6 +19,7 @@ namespace ProjectDetailsAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    //public class ProjectsController : ControllerBase
     public class ProjectsController : ControllerBase
     {
         private readonly ProjectDetailsDbContext _dbcontext;
