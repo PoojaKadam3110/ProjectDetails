@@ -4,6 +4,7 @@ using MySqlX.XDevAPI;
 using ProjectDetailsAPI.Data;
 using ProjectDetailsAPI.Models.Domain;
 using ProjectDetailsAPI.Services.IProjects;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace ProjectDetailsAPI.Implementation.ProjectsImp
 {
@@ -55,7 +56,14 @@ namespace ProjectDetailsAPI.Implementation.ProjectsImp
 
         public async Task<Projects> AddProjects(Projects projects)
         {
+            projects.isActive = true;
+            projects.isDeleted = false;
+            projects.CreatedDate = DateTime.Now;
+            projects.CreatedBy = "Pooja";
+            projects.UpdatedDate = DateTime.Now;
+            projects.UpdatedBy = "Pooja";
             await _dbcontext.Projects.AddAsync(projects);
+           
             await _dbcontext.SaveChangesAsync();
             return projects;
         }
@@ -64,7 +72,7 @@ namespace ProjectDetailsAPI.Implementation.ProjectsImp
         {
             var existingProject = await _dbcontext.Projects.FirstOrDefaultAsync(x => x.Id == id);
 
-            if (existingProject == null)
+            if (existingProject == null  || existingProject.isDeleted == true)
             {
                 return null;
             }

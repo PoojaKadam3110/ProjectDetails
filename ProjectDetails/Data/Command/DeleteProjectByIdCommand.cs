@@ -32,7 +32,7 @@ namespace ProjectDetailsAPI.Data.Command
             {
                 Data = dataDelete ?? default,
                 IsSuccessful = dataDelete != null,
-                Errors = dataDelete != null ? default : new() { "Not able to found this id, please first insert data only after that we can able to delete data!!!" }
+                Errors = dataDelete != null ? default : new() { "Not able to find the id: " +request.id + " May be deleted this id, please first insert data only after that we can able to delete data!!!" }
             };
         }
     }
