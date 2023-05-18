@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -11,6 +12,7 @@ using ProjectDetailsAPI.Data.Command;
 using ProjectDetailsAPI.Data.Query;
 using ProjectDetailsAPI.GenericRepo;
 using ProjectDetailsAPI.Models.Domain;
+using ProjectDetailsAPI.Models.DTO;
 using ProjectDetailsAPI.Services;
 using ProjectDetailsAPI.Services.IProjects;
 using System.Data;
@@ -55,6 +57,25 @@ namespace ProjectDetailsAPI.Controllers
 
         }
 
+        [HttpPost("/api/Projects/AddProjects")]
+        [ValidateModule]
+        public async Task<ActionResult<ProjectsDto>> AddProjects(ProjectsDto projectsFromClt)
+        {
+            var response = await _mediator.Send(new AddProjectsCommand
+            {
+                projects = projectsFromClt
+            });
+
+            if (response.IsSuccessful == false)
+            {
+                return null;
+            }
+            //var projectModel = _mapper.Map<Projects>(response);
+            //return Ok(response);
+            //return CreatedAtAction(nameof(GetById), new { id = projects.Id }, projects);
+            return CreatedAtAction("GetById", new { Id = response.Data.Id }, response);
+        }
+
         [HttpGet("ProjectsCount")]
         [Authorize(Roles = "Admin")]
         public IActionResult GetRecordCountProjects()
@@ -94,25 +115,7 @@ namespace ProjectDetailsAPI.Controllers
             var clientsFromRepo = _unitOfWork.Clients.GetAll(pageNumber, pageSize).Where(x => x.isDeleted == false);
 
             return Ok(clientsFromRepo);
-        }
-
-        [HttpPost("/api/Projects/AddProjects")]
-        [ValidateModule]
-        public async Task<ActionResult<Projects>> AddProjects(Projects projects)
-        {
-            var response = await _mediator.Send(new AddProjectsCommand
-            {
-                projects = projects
-            });
-
-            if (response.IsSuccessful == false)
-            {
-                return null;
-            }
-            //return projects;
-            //return CreatedAtAction(nameof(GetById), new { id = projects.Id }, projects);
-            return CreatedAtAction("GetById", new { id = projects.Id }, projects);
-        }
+        }     
 
         [HttpGet("/api/Projects/By/Id")]
         public ActionResult GetById(int id)
@@ -129,7 +132,7 @@ namespace ProjectDetailsAPI.Controllers
 
         [HttpPut("/api/Projects/Update/By/Id")]
         [ValidateModule]
-        public async Task<Projects> UpdateProjects(int id, Projects projects)
+        public async Task<UpdateProjectsDto> UpdateProjects(int id, UpdateProjectsDto projects)
         {
             var response = await _mediator.Send(new UpdateProjectsCommand
             {
@@ -143,6 +146,8 @@ namespace ProjectDetailsAPI.Controllers
             }
 
             return projects;
+            //return response;
+            //return null;
         }
 
         [HttpDelete("/api/Projects/Delete/By/Id")]

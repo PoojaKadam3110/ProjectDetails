@@ -1,5 +1,8 @@
 ﻿using AutoMapper;
 using ProjectDetailsAPI.Models.Domain;
+using System.Drawing.Drawing2D;
+using System.Drawing;
+using ProjectDetailsAPI.Models.DTO;
 
 namespace ProjectDetailsAPI.Mappings
 {
@@ -7,7 +10,7 @@ namespace ProjectDetailsAPI.Mappings
     {
         public AutoMapperProfiles()
         {
-            CreateMap<Projects, Projects>().ReverseMap();
+            CreateMap<Projects, ProjectsDto>().ReverseMap();
         }
     }
 }

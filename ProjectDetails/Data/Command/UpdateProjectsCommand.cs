@@ -1,6 +1,7 @@
 ﻿using MediatR;
 using ProjectDetailsAPI.Common;
 using ProjectDetailsAPI.Models.Domain;
+using ProjectDetailsAPI.Models.DTO;
 using ProjectDetailsAPI.Services;
 using ProjectDetailsAPI.Services.IProjects;
 using System.Runtime.Serialization;
@@ -13,7 +14,7 @@ namespace ProjectDetailsAPI.Data.Command
         private readonly IConfiguration _configuration;
         [DataMember]
         public int id { get; set; }
-        public Projects projects { get; set; }
+        public UpdateProjectsDto projects { get; set; }
     }
 
     public class UpdateProjectsCommandHandlers : IRequestHandler<UpdateProjectsCommand, QueryResponse>

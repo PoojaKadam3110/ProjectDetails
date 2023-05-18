@@ -1,6 +1,7 @@
 ﻿using MediatR;
 using ProjectDetailsAPI.Common;
 using ProjectDetailsAPI.Models.Domain;
+using ProjectDetailsAPI.Models.DTO;
 using ProjectDetailsAPI.Services.IProjects;
 
 namespace ProjectDetailsAPI.Data.Command
@@ -8,7 +9,7 @@ namespace ProjectDetailsAPI.Data.Command
     public class AddProjectsCommand : IRequest<QueryResponse>
     {
         private readonly IConfiguration _configuration;
-        public Projects projects { get; set; }
+        public ProjectsDto projects { get; set; }
     }
 
     public class AddProjectsCommandHandlers : IRequestHandler<AddProjectsCommand, QueryResponse>

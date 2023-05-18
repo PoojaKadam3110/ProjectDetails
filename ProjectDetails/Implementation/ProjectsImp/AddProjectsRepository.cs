@@ -1,8 +1,10 @@
 ﻿using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
 using MySqlX.XDevAPI;
+using Org.BouncyCastle.Asn1.Ocsp;
 using ProjectDetailsAPI.Data;
 using ProjectDetailsAPI.Models.Domain;
+using ProjectDetailsAPI.Models.DTO;
 using ProjectDetailsAPI.Services.IProjects;
 
 namespace ProjectDetailsAPI.Implementation.ProjectsImp
@@ -53,11 +55,29 @@ namespace ProjectDetailsAPI.Implementation.ProjectsImp
 
 
 
-        public async Task<Projects> AddProjects(Projects projects)
+        public async Task<Projects> AddProjects(ProjectsDto projects)
         {
-            await _dbcontext.Projects.AddAsync(projects);
-            await _dbcontext.SaveChangesAsync();
-            return projects;
+            Projects projectsDomain = new Projects();
+            projectsDomain.Id = projects.Id;
+            projectsDomain.ProjectName = projects.ProjectName;
+            projectsDomain.ClientName = projects.ClientName;
+            projectsDomain.projectManager = projects.projectManager;
+            projectsDomain.ratePerHour = projects.ratePerHour;
+            projectsDomain.projectCost = projects.projectCost;
+            projectsDomain.projectUsers = projects.projectUsers;
+            projectsDomain.description = projects.description;
+
+            projectsDomain.isActive = true;
+            projectsDomain.isDeleted = false;
+            projectsDomain.CreatedBy = "Pooja";
+            projectsDomain.CreatedDate = DateTime.Now;
+            projectsDomain.UpdatedBy = "Pooja";
+            projectsDomain.UpdatedDate = DateTime.Now;
+
+            _dbcontext.Projects.Add(projectsDomain);
+            _dbcontext.SaveChanges();
+
+            return projectsDomain;
         }
 
         public async Task<Projects> DeleteProjectById(int id)
@@ -77,7 +97,7 @@ namespace ProjectDetailsAPI.Implementation.ProjectsImp
             return existingProject;
         }
 
-        public async Task<Projects> UpdateProject(int id, Projects projects)
+        public async Task<Projects> UpdateProject(int id, UpdateProjectsDto projects)
         {
 
             var existingProject = await _dbcontext.Projects.FirstOrDefaultAsync(x => x.Id == id);
@@ -92,7 +112,6 @@ namespace ProjectDetailsAPI.Implementation.ProjectsImp
             existingProject.ratePerHour = projects.ratePerHour;
             existingProject.description = projects.description;
             existingProject.ClientName = projects.ClientName;
-            existingProject.CreatedDate = projects.CreatedDate;
             existingProject.UpdatedDate = DateTime.Now;
 
             await _dbcontext.SaveChangesAsync();
