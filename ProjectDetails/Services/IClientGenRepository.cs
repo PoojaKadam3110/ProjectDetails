@@ -5,6 +5,6 @@ namespace ProjectDetailsAPI.Services
 {
     public interface IClientGenRepository : IGenericRepository<Clients>
     {
-        //IEnumerable<Clients> GetClientsWithProjects();
+        
     }
 }

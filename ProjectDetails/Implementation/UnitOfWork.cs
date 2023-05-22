@@ -15,13 +15,11 @@ namespace ProjectDetailsAPI.Implementation
             Clients = new ClientGenRepository(_dbcontext);
             Users = new UsersRepository(_dbcontext);
             Projects = new ProjectTestRepository(_dbcontext);
-            Roles = new RoleRepository(_dbcontext);
         }
 
         public IClientGenRepository Clients { get; private set; }
         public IUsersRepository Users { get; private set; }
         public IProjectTestRepository Projects { get; private set; }
-        public IRoleRepository Roles { get; private set; }
 
         public int Save()
         {

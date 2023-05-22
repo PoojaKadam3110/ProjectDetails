@@ -9,7 +9,7 @@ using System.Runtime.Serialization;
 namespace ProjectDetailsAPI.Data.Command
 {
    
-      public class UpdateProjectsCommand : IRequest<QueryResponse>
+      public class UpdateProjectsCommand : IRequest<CommandResponse>
     {
         private readonly IConfiguration _configuration;
         [DataMember]
@@ -17,26 +17,26 @@ namespace ProjectDetailsAPI.Data.Command
         public UpdateProjectsDto projects { get; set; }
     }
 
-    public class UpdateProjectsCommandHandlers : IRequestHandler<UpdateProjectsCommand, QueryResponse>
+    public class UpdateProjectsCommandHandlers : IRequestHandler<UpdateProjectsCommand, CommandResponse>
     {
-        private readonly IAddProjectsRepository _projectRepository;
+        private readonly IProjectsRepository _projectRepository;
         private readonly ProjectDetailsDbContext _dbcontext;
 
-        public UpdateProjectsCommandHandlers(IAddProjectsRepository projectRepository, ProjectDetailsDbContext context)
+        public UpdateProjectsCommandHandlers(IProjectsRepository projectRepository, ProjectDetailsDbContext context)
         {
             _projectRepository = projectRepository;
             _dbcontext = context;
         }
 
-        public async Task<QueryResponse> Handle(UpdateProjectsCommand request, CancellationToken cancellationToken)
+        public async Task<CommandResponse> Handle(UpdateProjectsCommand request, CancellationToken cancellationToken)
         {
             var data = await _projectRepository.UpdateProject(request.id, request.projects);
 
-            return new QueryResponse()
+            return new CommandResponse()
             {
                 Data = data ?? default,
                 IsSuccessful = data != null,
-                Errors = data != null ? default : new() { $"You Can not Update project may be not available!!!" }
+                Errors = data != null ? default : new() { $"You Can not able to Update project may be this project id is not available!!!" }
             };
         }
     }

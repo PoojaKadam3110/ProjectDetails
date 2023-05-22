@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using MySqlX.XDevAPI;
 using ProjectDetailsAPI.Data;
 using ProjectDetailsAPI.GenericRepo;
 using ProjectDetailsAPI.Models.Domain;
@@ -17,59 +18,79 @@ namespace ProjectDetailsAPI.Implementation
         }
         public void Add(T entity)
         {
-            if (entity == null)
+            try
             {
-                throw new ArgumentNullException("entities");
+                if (entity == null)
+                {
+                    throw new ArgumentNullException("entities");
+                }
+                _dbContext.Set<T>().Add(entity);
+                _dbContext.SaveChanges();
             }
-            _dbContext.Set<T>().Add(entity);
-            _dbContext.SaveChanges();
-        }
-
-        public void AddRange(IEnumerable<T> entities)
-        {
-           _dbContext.Set<T>().AddRange(entities);
-        }
-
-        public IEnumerable<T> Find(Expression<Func<T, bool>> predicate)
-        {
-           return _dbContext.Set<T>().Where(predicate);
-        }
-
+            catch (Exception ex) 
+            {
+                throw new Exception("Not able to add your data ", ex);
+            }
+        }       
         public IEnumerable<T> GetAll(int pageNumber = 1, int pageSize = 1000)
         {
-            var skipResults = (pageNumber - 1) * pageSize;
-            return _dbContext.Set<T>().Skip(skipResults).Take(pageSize).ToList();        
+            try
+            {
+                var skipResults = (pageNumber - 1) * pageSize;
+                return _dbContext.Set<T>().Skip(skipResults).Take(pageSize).ToList();
+            }     
+            catch (Exception ex)
+            {
+                throw new Exception("Not able to find out the list of records ", ex);
+            }
         }
 
         public T GetById(int id)
         {
-            return _dbContext.Set<T>().Find(id);
+            try
+            {
+                return _dbContext.Set<T>().Find(id);
+            }
+            catch (Exception ex) 
+            {
+                throw new Exception("Not able to find out this id ", ex);
+            }
         }
 
         public void SoftDelete(T Entity)
         {
-            PropertyInfo isDeletedProp = Entity.GetType().GetProperty("isDeleted");
-            if(isDeletedProp != null)
+            try
             {
-                isDeletedProp.SetValue(Entity, true);
-                _dbContext.Set<T>().Update(Entity);
-                _dbContext.SaveChanges();
+                PropertyInfo isDeletedProp = Entity.GetType().GetProperty("isDeleted");
+                if (isDeletedProp != null)
+                {
+                    isDeletedProp.SetValue(Entity, true);
+                    _dbContext.Set<T>().Update(Entity);
+                    _dbContext.SaveChanges();
+                }
+                else
+                {
+                    throw new ArgumentException("This Entity does not have property named isDeleted");
+                }
             }
-            else
+            catch (ArgumentException ex)
             {
-                throw new ArgumentException("This Entity does not have property named isDeleted");
+                throw new Exception("Not able to delete the data ", ex);
             }
-        }
 
-        public void RemoveRange(IEnumerable<T> entities)
-        {
-            _dbContext.Set<T>().RemoveRange(entities);
         }
 
         public void Update(T Entity)
         {
-            _dbContext.Set<T>().Update(Entity);
-            _dbContext.SaveChanges();
+            try
+            {
+                _dbContext.Set<T>().Update(Entity);
+                _dbContext.SaveChanges();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("not able to update data ", ex);
+            }
         }
     }
 }

@@ -5,10 +5,6 @@ namespace ProjectDetailsAPI.Data
 {
     public class ProjectDetailsDbContext : DbContext
     {
-    //    public ProjectDetailsDbContext()
-    //    {
-    //    }
-
         public ProjectDetailsDbContext(DbContextOptions<ProjectDetailsDbContext> options) : base(options)
         {
             

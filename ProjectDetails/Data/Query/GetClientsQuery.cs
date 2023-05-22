@@ -16,8 +16,6 @@ namespace ProjectDetailsAPI.Data.Query
 
         public GetClientsQueryHandlers(IClientRepository clientRepository, ProjectDetailsDbContext context)        {            _clientRepository = clientRepository;            _dbcontext = context;        }        public async Task<QueryResponse> Handle(GetClientsQuery request, CancellationToken cancellationToken)        {            var userLists = await _clientRepository.GetUsers();
 
-            //var data =  await _dbcontext.Clients.Where(x => x.isDeleted == false).FirstOrDefaultAsync(x => x.Id == request.id);
-
             return new QueryResponse()            {
                 Data = userLists.Any() ? userLists : default,
                 IsSuccessful = userLists.Any(),

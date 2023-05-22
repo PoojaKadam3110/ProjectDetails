@@ -5,30 +5,30 @@ using ProjectDetailsAPI.Services.IProjects;
 using System.Runtime.Serialization;
 
 namespace ProjectDetailsAPI.Data.Command
-{   
-    public class DeleteProjectByIdCommand : IRequest<QueryResponse>
+{
+    public class DeleteProjectByIdCommand : IRequest<CommandResponse>
     {
         private readonly IConfiguration _configuration;
         [DataMember]
         public int id { get; set; }
     }
 
-    public class DeleteProjectByIdCommandHandlers : IRequestHandler<DeleteProjectByIdCommand, QueryResponse>
+    public class DeleteProjectByIdCommandHandlers : IRequestHandler<DeleteProjectByIdCommand, CommandResponse>
     {
-        private readonly IAddProjectsRepository _projectRepository;
+        private readonly IProjectsRepository _projectRepository;
         private readonly ProjectDetailsDbContext _dbcontext;
 
-        public DeleteProjectByIdCommandHandlers(IAddProjectsRepository clientRepository, ProjectDetailsDbContext context)
+        public DeleteProjectByIdCommandHandlers(IProjectsRepository clientRepository, ProjectDetailsDbContext context)
         {
             _projectRepository = clientRepository;
             _dbcontext = context;
         }
 
-        public async Task<QueryResponse> Handle(DeleteProjectByIdCommand request, CancellationToken cancellationToken)
+        public async Task<CommandResponse> Handle(DeleteProjectByIdCommand request, CancellationToken cancellationToken)
         {
             var dataDelete = await _projectRepository.DeleteProjectById(request.id);
 
-            return new QueryResponse()
+            return new CommandResponse()
             {
                 Data = dataDelete ?? default,
                 IsSuccessful = dataDelete != null,

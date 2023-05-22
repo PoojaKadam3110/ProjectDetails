@@ -10,7 +10,7 @@ using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace ProjectDetailsAPI.Data.Command
 {
-    public class UpdateClientsCommand : IRequest<QueryResponse>
+    public class UpdateClientsCommand : IRequest<CommandResponse>
     {
         private readonly IConfiguration _configuration;
         [DataMember]
@@ -18,7 +18,7 @@ namespace ProjectDetailsAPI.Data.Command
         public Clients clients { get; set; }
     }
 
-    public class UpdateClientsCommandHandlers : IRequestHandler<UpdateClientsCommand, QueryResponse>
+    public class UpdateClientsCommandHandlers : IRequestHandler<UpdateClientsCommand, CommandResponse>
     {
         private readonly IClientRepository _clientRepository;
         private readonly ProjectDetailsDbContext _dbcontext;
@@ -29,15 +29,11 @@ namespace ProjectDetailsAPI.Data.Command
             _dbcontext = context;
         }
 
-        public async Task<QueryResponse> Handle(UpdateClientsCommand request, CancellationToken cancellationToken)
+        public async Task<CommandResponse> Handle(UpdateClientsCommand request, CancellationToken cancellationToken)
         {
             var userLists = await _clientRepository.UpdateClients(request.id,request.clients);
-            //var data = await _dbcontext.Clients.Where(x => x.isDeleted == false).UpdateClients(x => x.Id == request.id);
-
-
-            //var data =  await _dbcontext.Clients.Where(x => x.isDeleted == false).FirstOrDefaultAsync(x => x.Id == request.id);
-
-            return new QueryResponse()
+           
+            return new CommandResponse()
             {
                 Data = userLists?? default,
                 IsSuccessful = userLists != null,
