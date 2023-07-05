@@ -11,12 +11,20 @@ using ProjectDetailsAPI.Mappings;
 using ProjectDetailsAPI.Repositories;
 using ProjectDetailsAPI.Services;
 using ProjectDetailsAPI.Services.IProjects;
+using Serilog;
 using System.Reflection;
+using Serilog.Events;
 using System.Text;
+using System.Configuration;
 
 // for cors
 var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
 var builder = WebApplication.CreateBuilder(args);
+
+
+//For environment
+//Environment.SetEnvironmentVariable("ASPNETCORE_APIURL", builder.Configuration.GetSection("Urls").GetSection("APIURL").Value);
+//var env = Environment.GetEnvironmentVariable("ASPNETCORE_APIURL");
 
 
 builder.Services.AddCors(options =>
@@ -76,7 +84,24 @@ builder.Services.AddDbContext<ProjectDetailsDbContext>(options =>
  options.UseSqlServer(builder.Configuration.GetConnectionString("ProjectDetailsConnectionStrings")));
 // For AuthDbContext()
 builder.Services.AddDbContext<ProjectDetailsAuthDbContext>(options =>
-options.UseSqlServer(builder.Configuration.GetConnectionString("ProjectsAuthConnectionStrings"))); 
+options.UseSqlServer(builder.Configuration.GetConnectionString("ProjectsAuthConnectionStrings")));
+
+
+//For Logger
+builder.Services.AddLogging();
+Log.Logger = new LoggerConfiguration()
+    .MinimumLevel.Debug()
+    .WriteTo.Console()
+    .CreateLogger();
+//Log.Logger = new LoggerConfiguration()
+//    .MinimumLevel.Information()
+//    .WriteTo.File("Log/log.txt",
+//    rollingInterval: RollingInterval.Minute)
+//    .CreateLogger();
+//use this line to ovverride the built-in loggers
+builder.Host.UseSerilog();
+//Use serilog along with built-in loggers
+builder.Logging.AddSerilog();
 
 //add repositories 
 builder.Services.AddScoped<ITokenRepository, TokenRepository>(); //for token creation
@@ -131,9 +156,13 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 //End of Authentication
 
 var app = builder.Build();
+IConfiguration Configuration = app.Configuration;
+
+Console.WriteLine("Current Environment is: " + app.Environment.EnvironmentName);
+Console.WriteLine("MyConfig value is : " + Configuration.GetValue<string>("MyConfig"));
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
+if (app.Environment.IsDevelopment())    //|| app.Environment.IsProduction()
 {
     app.UseSwagger();
     app.UseSwaggerUI();

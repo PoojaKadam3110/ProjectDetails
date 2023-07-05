@@ -15,12 +15,15 @@ namespace ProjectDetailsAPI.Implementation.ProjectsImp
         private readonly IConfiguration _configuration;
         private readonly ProjectDetailsDbContext _dbcontext;
         private readonly IUnitOfWork _unitOfWork;
+        private readonly ILogger<ProjectsRepository> _logger;
 
-        public ProjectsRepository(IConfiguration configuration,ProjectDetailsDbContext dbcontext,IUnitOfWork unitOfWork)
+
+        public ProjectsRepository(IConfiguration configuration,ProjectDetailsDbContext dbcontext, IUnitOfWork unitOfWork, ILogger<ProjectsRepository> logger)
         {
             _configuration = configuration;
             _dbcontext = dbcontext;
             _unitOfWork = unitOfWork;
+            _logger = logger;
         }
         public async Task<List<Projects>> GetAll(string? filterOn = null, string? filterQuery = null,
           string? sortBy = null, bool isAscending = true, int pageNumber = 1, int pageSize = 1000)  //modified thid method for filtering and middle two for sorting and last two for pagginatiom
@@ -52,7 +55,7 @@ namespace ProjectDetailsAPI.Implementation.ProjectsImp
 
                 //Paggination
                 var skipResults = (pageNumber - 1) * pageSize;
-
+                _logger.LogInformation("Executing GetAllProjects");
                 return await data.Skip(skipResults).Take(pageSize).ToListAsync();     // for paggination
                                                                                       //return await walks.ToListAsync();    
 
@@ -85,7 +88,7 @@ namespace ProjectDetailsAPI.Implementation.ProjectsImp
                 projectsDomain.UpdatedDate = DateTime.Now;
 
                 _unitOfWork.Projects.Add(projectsDomain);
-
+                _logger.LogInformation("Successfully Projects Created!!!");
                 return projectsDomain;
             }
             catch (Exception ex)
@@ -125,13 +128,17 @@ namespace ProjectDetailsAPI.Implementation.ProjectsImp
         public async Task<Projects> UpdateProject(int id, UpdateProjectsDto projects)
         {
             try
-            {
+            {   
+                if(id == projects.Id)
+                {
+                    return null; 
+                }
                 var existingProject = await _dbcontext.Projects.FirstOrDefaultAsync(x => x.Id == id);
 
-                //if (existingProject == null)
-                //{
-                //    return null;
-                //}
+                if (existingProject == null)
+                {
+                    return null;
+                }
                 existingProject.ProjectName = projects.ProjectName;
                 existingProject.projectManager = projects.projectManager;
                 existingProject.projectCost = projects.projectCost;

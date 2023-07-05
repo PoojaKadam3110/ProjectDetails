@@ -4,6 +4,7 @@ namespace ProjectDetailsAPI.Models.DTO
 {
     public class UpdateProjectsDto
     {
+        public int Id { get; set; }
         public string ProjectName { get; set; }
         public string ClientName { get; set; }
         public double projectCost { get; set; }
